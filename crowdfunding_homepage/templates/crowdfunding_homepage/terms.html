@@ -1,0 +1,44 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}Terms of Service - Crowdfunding Platform{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="auth-container p-5">
+                <h1 class="text-center mb-4">Terms of Service</h1>
+                
+                <div class="mb-4">
+                    <h3>1. Acceptance of Terms</h3>
+                    <p>By accessing and using this crowdfunding platform, you accept and agree to be bound by the terms and provision of this agreement.</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h3>2. Use License</h3>
+                    <p>Permission is granted to temporarily download one copy of the materials (information or software) on our platform for personal, non-commercial transitory viewing only.</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h3>3. Disclaimer</h3>
+                    <p>The materials on our platform are provided on an 'as is' basis. We make no warranties, expressed or implied, and hereby disclaim and negate all other warranties including without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h3>4. Limitations</h3>
+                    <p>In no event shall our platform or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on our platform.</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h3>5. Revisions and Errata</h3>
+                    <p>The materials appearing on our platform could include technical, typographical, or photographic errors. We do not warrant that any of the materials on our platform are accurate, complete or current.</p>
+                </div>
+                
+                <div class="text-center">
+                    <a href="{% url 'homepage:homepage' %}" class="btn btn-primary">Back to Homepage</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

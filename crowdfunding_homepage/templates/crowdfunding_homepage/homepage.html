@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crowdfunding Platform - Fund Amazing Projects</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            padding-top: 76px; /* Account for fixed navbar */
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .hero-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .search-box {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .search-input {
+            border: none;
+            border-radius: 25px;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            width: 100%;
+            outline: none;
+        }
+        
+        .search-btn {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #20c997 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 15px 30px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        /* Project Cards */
+        .project-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        
+        /* Featured Slider Card */
+        .featured-slider-card {
+            border: 3px solid var(--primary-color);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .featured-slider-card .project-image {
+            height: 300px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 5%;
+            background: rgba(0,0,0,0.3);
+            border-radius: 50%;
+            height: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .carousel-indicators {
+            bottom: -50px;
+        }
+        
+        .carousel-indicators button {
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            width: 12px;
+            height: 12px;
+        }
+        
+        /* Trending Card */
+        .trending-card {
+            border: 2px solid #ff6b6b;
+            box-shadow: 0 5px 20px rgba(255, 107, 107, 0.2);
+        }
+        
+        .trending-card:hover {
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.3);
+        }
+        
+        /* Ending Soon Card */
+        .ending-soon-card {
+            border: 2px solid #ffc107;
+            box-shadow: 0 5px 20px rgba(255, 193, 7, 0.2);
+            animation: pulse 2s infinite;
+        }
+        
+        .ending-soon-card:hover {
+            box-shadow: 0 15px 40px rgba(255, 193, 7, 0.3);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        
+        .project-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .project-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .project-card:hover .project-overlay {
+            opacity: 1;
+        }
+        
+        .project-overlay .btn {
+            background: white;
+            color: var(--primary-color);
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .project-overlay .btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .project-content {
+            padding: 1.5rem;
+        }
+        
+        .project-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .project-creator {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: #e9ecef;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-color), #20c997);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .project-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .project-target {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .project-progress {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .project-tags {
+            margin-bottom: 1rem;
+        }
+        
+        .tag {
+            display: inline-block;
+            background: #f8f9fa;
+            color: #666;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .project-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .stars {
+            color: #ffc107;
+        }
+        
+        .rating-count {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* Category Cards */
+        .category-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .category-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .category-count {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* Section Headers */
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Stats Section */
+        .stats-section {
+            background: #f8f9fa;
+            padding: 80px 0;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 1.1rem;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #20c997 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+        
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cta-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .cta-btn {
+            background: white;
+            color: var(--accent-color);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        /* Navbar Styles */
+        .navbar {
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-brand {
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--accent-color) !important;
+        }
+        
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+        
+        .dropdown-item {
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .dropdown-item:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .search-box {
+                padding: 15px;
+            }
+            
+            .navbar-nav {
+                text-align: center;
+                margin-top: 1rem;
+            }
+            
+            .navbar-nav .nav-link {
+                padding: 0.5rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 1000;">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'homepage:homepage' %}">
+                <i class="fas fa-hand-holding-heart me-2"></i>Crowdfunding Platform
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'projects:project_list' %}">
+                            <i class="fas fa-list me-1"></i>All Projects
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'homepage:category_explore' %}">
+                            <i class="fas fa-compass me-1"></i>Categories
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'homepage:about' %}">
+                            <i class="fas fa-info-circle me-1"></i>About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'homepage:contact' %}">
+                            <i class="fas fa-envelope me-1"></i>Contact
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user me-1"></i>{{ user.first_name|default:user.username }}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">
+                                    <i class="fas fa-user-circle me-2"></i>My Profile
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'projects:project_create' %}">
+                                    <i class="fas fa-rocket me-2"></i>Create Project
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Sign Out
+                                </a></li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}" class="btn btn-outline-light me-2">
+                            <i class="fas fa-sign-in-alt me-1"></i>Sign In
+                        </a>
+                        <a href="{% url 'accounts:register' %}" class="btn btn-success">
+                            <i class="fas fa-user-plus me-1"></i>Sign Up
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 hero-content">
+                    <h1 class="hero-title">Fund Amazing Projects</h1>
+                    <p class="hero-subtitle">
+                        Join thousands of people supporting innovative ideas and creative projects. 
+                        Make a difference today by backing the projects that inspire you.
+                    </p>
+                    <div class="search-box">
+                        <form method="GET" action="{% url 'homepage:search_results' %}">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <input type="text" name="search_query" class="search-input" 
+                                           placeholder="Search for projects, creators, or categories...">
+                                </div>
+                                <div class="col-3">
+                                    <select name="search_type" class="search-input">
+                                        <option value="title">Project Title</option>
+                                        <option value="tag">Tags</option>
+                                        <option value="category">Category</option>
+                                        <option value="creator">Creator</option>
+                                    </select>
+                                </div>
+                                <div class="col-3">
+                                    <button type="submit" class="search-btn w-100">
+                                        <i class="fas fa-search me-2"></i>Search
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="mt-4 text-center">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'accounts:profile' %}" class="btn btn-success btn-lg me-3">
+                                <i class="fas fa-user-circle me-2"></i>My Profile
+                            </a>
+                            <a href="{% url 'projects:project_create' %}" class="btn btn-outline-light btn-lg">
+                                <i class="fas fa-rocket me-2"></i>Create Project
+                            </a>
+                        {% else %}
+                            <a href="{% url 'accounts:register' %}" class="btn btn-success btn-lg me-3">
+                                <i class="fas fa-user-plus me-2"></i>Sign Up
+                            </a>
+                            <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <i class="fas fa-rocket" style="font-size: 8rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Top Rated Projects Slider -->
+    {% if top_rated_projects %}
+    <section class="py-5">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Top Rated Projects</h2>
+                <p class="section-subtitle">Discover the most loved and highly-rated projects on our platform</p>
+            </div>
+            
+            <div id="topRatedCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    {% for project in top_rated_projects %}
+                    <button type="button" data-bs-target="#topRatedCarousel" data-bs-slide-to="{{ forloop.counter0 }}" 
+                            {% if forloop.first %}class="active" aria-current="true"{% endif %} aria-label="Slide {{ forloop.counter }}"></button>
+                    {% endfor %}
+                </div>
+                
+                <div class="carousel-inner">
+                    {% for project in top_rated_projects %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <div class="project-card featured-slider-card">
+                                    <div class="project-image" style="background-image: url('{% if project.images.first %}{{ project.images.first.image.url }}{% else %}https://via.placeholder.com/800x400/667eea/ffffff?text=No+Image{% endif %}');">
+                                        <div class="project-overlay">
+                                            <a href="{% url 'projects:project_detail' project.slug %}" class="btn btn-light btn-lg">
+                                                <i class="fas fa-eye me-2"></i>View Project
+                                            </a>
+                                        </div>
+                                        <div class="position-absolute top-0 start-0 m-3">
+                                            <span class="badge bg-warning text-dark fs-6">
+                                                <i class="fas fa-star me-1"></i>Top Rated
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="project-content p-4">
+                                        <h3 class="project-title mb-3">{{ project.title }}</h3>
+                                        <p class="project-creator fs-5 mb-3">by {{ project.creator.get_full_name }}</p>
+                                        
+                                        <div class="progress mb-3" style="height: 10px;">
+                                            <div class="progress-bar bg-success" style="width: {{ project.progress_percentage }}%"></div>
+                                        </div>
+                                        
+                                        <div class="row mb-3">
+                                            <div class="col-6">
+                                                <div class="text-center">
+                                                    <div class="fs-4 fw-bold text-primary">{{ project.current_amount|floatformat:0 }} EGP</div>
+                                                    <small class="text-muted">Raised</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="text-center">
+                                                    <div class="fs-4 fw-bold text-success">{{ project.progress_percentage|floatformat:1 }}%</div>
+                                                    <small class="text-muted">Funded</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="project-rating text-center mb-3">
+                                            <div class="stars fs-4">
+                                                {% for i in "12345" %}
+                                                    {% if forloop.counter <= project.average_rating %}
+                                                        <i class="fas fa-star text-warning"></i>
+                                                    {% else %}
+                                                        <i class="far fa-star text-warning"></i>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                            <span class="rating-count text-muted">({{ project.total_ratings }} ratings)</span>
+                                        </div>
+                                        
+                                        <div class="text-center">
+                                            <a href="{% url 'projects:project_detail' project.slug %}" class="btn btn-primary btn-lg">
+                                                <i class="fas fa-heart me-2"></i>Support This Project
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <button class="carousel-control-prev" type="button" data-bs-target="#topRatedCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#topRatedCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Latest Projects -->
+    {% if latest_projects %}
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Latest Projects</h2>
+                <p class="section-subtitle">Be among the first to discover and support new innovative projects</p>
+            </div>
+            
+            <div class="row">
+                {% for project in latest_projects %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="project-card">
+                        <div class="project-image" style="background-image: url('{% if project.images.first %}{{ project.images.first.image.url }}{% else %}https://via.placeholder.com/400x200/28a745/ffffff?text=New+Project{% endif %}');">
+                            <div class="project-overlay">
+                                <a href="{% url 'projects:project_detail' project.slug %}" class="btn">
+                                    <i class="fas fa-eye me-2"></i>View Project
+                                </a>
+                            </div>
+                        </div>
+                        <div class="project-content">
+                            <h5 class="project-title">{{ project.title }}</h5>
+                            <p class="project-creator">by {{ project.creator.get_full_name }}</p>
+                            
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ project.progress_percentage }}%"></div>
+                            </div>
+                            
+                            <div class="project-stats">
+                                <span class="project-target">{{ project.current_amount|floatformat:0 }} EGP</span>
+                                <span class="project-progress">{{ project.progress_percentage|floatformat:1 }}%</span>
+                            </div>
+                            
+                            <div class="project-tags">
+                                {% for tag in project.tags.all|slice:":3" %}
+                                <span class="tag">{{ tag.name }}</span>
+                                {% endfor %}
+                            </div>
+                            
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i>
+                                {{ project.created_at|timesince }} ago
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{% url 'projects:project_list' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-list me-2"></i>View All Projects
+                </a>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Featured Projects -->
+    {% if featured_projects %}
+    <section class="py-5">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Featured Projects</h2>
+                <p class="section-subtitle">Hand-picked projects that showcase the best of our community</p>
+            </div>
+            
+            <div class="row">
+                {% for project in featured_projects %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="project-card">
+                        <div class="project-image" style="background-image: url('{% if project.images.first %}{{ project.images.first.image.url }}{% else %}https://via.placeholder.com/400x200/ffc107/ffffff?text=Featured{% endif %}');">
+                            <div class="project-overlay">
+                                <a href="{% url 'projects:project_detail' project.slug %}" class="btn">
+                                    <i class="fas fa-eye me-2"></i>View Project
+                                </a>
+                            </div>
+                            <div class="position-absolute top-0 start-0 m-3">
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-star me-1"></i>Featured
+                                </span>
+                            </div>
+                        </div>
+                        <div class="project-content">
+                            <h5 class="project-title">{{ project.title }}</h5>
+                            <p class="project-creator">by {{ project.creator.get_full_name }}</p>
+                            
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ project.progress_percentage }}%"></div>
+                            </div>
+                            
+                            <div class="project-stats">
+                                <span class="project-target">{{ project.current_amount|floatformat:0 }} EGP</span>
+                                <span class="project-progress">{{ project.progress_percentage|floatformat:1 }}%</span>
+                            </div>
+                            
+                            <div class="project-tags">
+                                {% for tag in project.tags.all|slice:":3" %}
+                                <span class="tag">{{ tag.name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Trending Projects -->
+    {% if trending_projects %}
+    <section class="py-5">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Trending Now</h2>
+                <p class="section-subtitle">Projects that are gaining momentum and receiving lots of support</p>
+            </div>
+            
+            <div class="row">
+                {% for project in trending_projects %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="project-card trending-card">
+                        <div class="project-image" style="background-image: url('{% if project.images.first %}{{ project.images.first.image.url }}{% else %}https://via.placeholder.com/400x200/ff6b6b/ffffff?text=Trending{% endif %}');">
+                            <div class="project-overlay">
+                                <a href="{% url 'projects:project_detail' project.slug %}" class="btn">
+                                    <i class="fas fa-eye me-2"></i>View Project
+                                </a>
+                            </div>
+                            <div class="position-absolute top-0 start-0 m-3">
+                                <span class="badge bg-danger fs-6">
+                                    <i class="fas fa-fire me-1"></i>Trending
+                                </span>
+                            </div>
+                        </div>
+                        <div class="project-content">
+                            <h5 class="project-title">{{ project.title }}</h5>
+                            <p class="project-creator">by {{ project.creator.get_full_name }}</p>
+                            
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ project.progress_percentage }}%"></div>
+                            </div>
+                            
+                            <div class="project-stats">
+                                <span class="project-target">{{ project.current_amount|floatformat:0 }} EGP</span>
+                                <span class="project-progress">{{ project.progress_percentage|floatformat:1 }}%</span>
+                            </div>
+                            
+                            <div class="project-tags">
+                                {% for tag in project.tags.all|slice:":3" %}
+                                <span class="tag">{{ tag.name }}</span>
+                                {% endfor %}
+                            </div>
+                            
+                            <small class="text-muted">
+                                <i class="fas fa-users me-1"></i>
+                                {{ project.recent_donations }} recent donations
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Ending Soon Projects -->
+    {% if ending_soon %}
+    <section class="py-5 bg-warning bg-opacity-10">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Ending Soon</h2>
+                <p class="section-subtitle">Don't miss out! These projects are ending in the next 7 days</p>
+            </div>
+            
+            <div class="row">
+                {% for project in ending_soon %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="project-card ending-soon-card">
+                        <div class="project-image" style="background-image: url('{% if project.images.first %}{{ project.images.first.image.url }}{% else %}https://via.placeholder.com/400x200/ffc107/ffffff?text=Ending+Soon{% endif %}');">
+                            <div class="project-overlay">
+                                <a href="{% url 'projects:project_detail' project.slug %}" class="btn">
+                                    <i class="fas fa-eye me-2"></i>View Project
+                                </a>
+                            </div>
+                            <div class="position-absolute top-0 start-0 m-3">
+                                <span class="badge bg-warning text-dark fs-6">
+                                    <i class="fas fa-clock me-1"></i>Ending Soon
+                                </span>
+                            </div>
+                        </div>
+                        <div class="project-content">
+                            <h5 class="project-title">{{ project.title }}</h5>
+                            <p class="project-creator">by {{ project.creator.get_full_name }}</p>
+                            
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ project.progress_percentage }}%"></div>
+                            </div>
+                            
+                            <div class="project-stats">
+                                <span class="project-target">{{ project.current_amount|floatformat:0 }} EGP</span>
+                                <span class="project-progress">{{ project.progress_percentage|floatformat:1 }}%</span>
+                            </div>
+                            
+                            <div class="project-tags">
+                                {% for tag in project.tags.all|slice:":3" %}
+                                <span class="tag">{{ tag.name }}</span>
+                                {% endfor %}
+                            </div>
+                            
+                            <small class="text-danger fw-bold">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                {{ project.days_remaining }} days left!
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Categories Section -->
+    {% if categories %}
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Explore by Category</h2>
+                <p class="section-subtitle">Find projects that match your interests and passions</p>
+            </div>
+            
+            <div class="row">
+                {% for category in categories %}
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <a href="{% url 'projects:category_detail' category.pk %}" class="text-decoration-none">
+                        <div class="category-card">
+                            <div class="category-icon">
+                                <i class="fas fa-{{ category.icon|default:'folder' }}"></i>
+                            </div>
+                            <h5 class="category-name">{{ category.name }}</h5>
+                            <p class="category-count">{{ category.project_count }} projects</p>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{% url 'homepage:category_explore' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-compass me-2"></i>Explore All Categories
+                </a>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Popular Tags -->
+    {% if popular_tags %}
+    <section class="py-5">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Popular Tags</h2>
+                <p class="section-subtitle">Discover projects by popular tags and interests</p>
+            </div>
+            
+            <div class="text-center">
+                {% for tag in popular_tags %}
+                <a href="{% url 'projects:tag_detail' tag.pk %}" class="btn btn-outline-secondary btn-lg m-2">
+                    <i class="fas fa-tag me-2"></i>{{ tag.name }}
+                    <span class="badge bg-secondary ms-2">{{ tag.project_count }}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-item">
+                        <div class="stat-number">{{ latest_projects.count|add:featured_projects.count|add:top_rated_projects.count }}</div>
+                        <div class="stat-label">Active Projects</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-item">
+                        <div class="stat-number">{{ categories.count }}</div>
+                        <div class="stat-label">Categories</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-item">
+                        <div class="stat-number">1000+</div>
+                        <div class="stat-label">Happy Backers</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-item">
+                        <div class="stat-number">95%</div>
+                        <div class="stat-label">Success Rate</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2 class="cta-title">Ready to Start Your Project?</h2>
+            <p class="cta-subtitle">
+                Join thousands of creators who have successfully funded their projects on our platform. 
+                Start your crowdfunding journey today!
+            </p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                <a href="{% url 'accounts:register' %}" class="btn cta-btn">
+                    <i class="fas fa-user-plus me-2"></i>Sign Up Now
+                </a>
+                <a href="{% url 'projects:project_create' %}" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-rocket me-2"></i>Create Your Project
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5>Crowdfunding Platform</h5>
+                    <p class="text-muted">
+                        Empowering creators and innovators to bring their ideas to life through 
+                        community support and crowdfunding.
+                    </p>
+                </div>
+                <div class="col-lg-2 mb-4">
+                    <h6>Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'homepage:about' %}" class="text-muted">About Us</a></li>
+                        <li><a href="{% url 'homepage:contact' %}" class="text-muted">Contact</a></li>
+                        <li><a href="{% url 'homepage:terms' %}" class="text-muted">Terms</a></li>
+                        <li><a href="{% url 'homepage:privacy' %}" class="text-muted">Privacy</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 mb-4">
+                    <h6>Categories</h6>
+                    <ul class="list-unstyled">
+                        {% for category in categories|slice:":5" %}
+                        <li><a href="{% url 'projects:category_detail' category.pk %}" class="text-muted">{{ category.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col-lg-3 mb-4">
+                    <h6>Connect With Us</h6>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-muted"><i class="fab fa-facebook fa-2x"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-twitter fa-2x"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-instagram fa-2x"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-linkedin fa-2x"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p class="text-muted mb-0">
+                    &copy; 2024 Crowdfunding Platform. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize carousel with auto-play
+        document.addEventListener('DOMContentLoaded', function() {
+            const carousel = document.getElementById('topRatedCarousel');
+            if (carousel) {
+                const bsCarousel = new bootstrap.Carousel(carousel, {
+                    interval: 5000, // Auto-play every 5 seconds
+                    wrap: true,
+                    keyboard: true
+                });
+            }
+            
+            // Add smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+            
+            // Add hover effects for project cards
+            document.querySelectorAll('.project-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

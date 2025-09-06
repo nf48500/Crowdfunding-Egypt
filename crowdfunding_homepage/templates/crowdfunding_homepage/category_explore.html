@@ -1,0 +1,80 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}Explore Categories - Crowdfunding Platform{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center mb-5">Explore Projects by Category</h1>
+        </div>
+    </div>
+    
+    {% for category in categories %}
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-{{ category.icon|default:'folder' }} me-2"></i>
+                        {{ category.name }}
+                        <span class="badge bg-light text-dark ms-2">{{ category.project_count }} projects</span>
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if category.featured_projects %}
+                    <div class="row">
+                        {% for project in category.featured_projects %}
+                        <div class="col-lg-4 col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-img-top" style="height: 200px; background-image: url('{% if project.images.first %}{{ project.images.first.image.url }}{% else %}https://via.placeholder.com/400x200/667eea/ffffff?text=No+Image{% endif %}'); background-size: cover; background-position: center;"></div>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ project.title }}</h5>
+                                    <p class="card-text text-muted">by {{ project.creator.get_full_name }}</p>
+                                    
+                                    <div class="progress mb-2" style="height: 8px;">
+                                        <div class="progress-bar" role="progressbar" style="width: {{ project.progress_percentage }}%"></div>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <small class="text-muted">{{ project.progress_percentage|floatformat:1 }}% funded</small>
+                                        <small class="text-muted">{{ project.current_amount|floatformat:0 }} EGP</small>
+                                    </div>
+                                    
+                                    <a href="{% url 'projects:project_detail' project.slug %}" class="btn btn-primary btn-sm">View Project</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center py-3">No featured projects in this category yet.</p>
+                    {% endif %}
+                    
+                    <div class="text-center mt-3">
+                        <a href="{% url 'projects:category_detail' category.pk %}" class="btn btn-outline-primary">
+                            View All {{ category.name }} Projects
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="row">
+        <div class="col-12">
+            <div class="text-center">
+                <h3 class="text-muted">No categories available</h3>
+                <p class="text-muted">Check back later for new categories and projects.</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    
+    <div class="text-center mt-5">
+        <a href="{% url 'homepage:homepage' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-home me-2"></i>Back to Homepage
+        </a>
+    </div>
+</div>
+{% endblock %}

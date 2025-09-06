@@ -1,0 +1,49 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}Contact Us - Crowdfunding Platform{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="auth-container p-5">
+                <h1 class="text-center mb-4">Contact Us</h1>
+                
+                <div class="mb-4">
+                    <h3>Get in Touch</h3>
+                    <p>Have questions or need support? We're here to help! Reach out to us through any of the following channels:</p>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-envelope me-2"></i>Email</h5>
+                        <p>support@crowdfunding.com</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-phone me-2"></i>Phone</h5>
+                        <p>+1 (555) 123-4567</p>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h5><i class="fas fa-clock me-2"></i>Business Hours</h5>
+                    <p>Monday - Friday: 9:00 AM - 6:00 PM EST<br>
+                    Saturday: 10:00 AM - 4:00 PM EST<br>
+                    Sunday: Closed</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h5><i class="fas fa-map-marker-alt me-2"></i>Address</h5>
+                    <p>123 Innovation Street<br>
+                    Tech City, TC 12345<br>
+                    United States</p>
+                </div>
+                
+                <div class="text-center">
+                    <a href="{% url 'homepage:homepage' %}" class="btn btn-primary">Back to Homepage</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

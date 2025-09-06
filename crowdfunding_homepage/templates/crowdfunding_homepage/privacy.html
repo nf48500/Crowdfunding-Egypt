@@ -1,0 +1,51 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}Privacy Policy - Crowdfunding Platform{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="auth-container p-5">
+                <h1 class="text-center mb-4">Privacy Policy</h1>
+                
+                <div class="mb-4">
+                    <h3>Information We Collect</h3>
+                    <p>We collect information you provide directly to us, such as when you create an account, create a project, make a donation, or contact us for support.</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h3>How We Use Your Information</h3>
+                    <p>We use the information we collect to:</p>
+                    <ul>
+                        <li>Provide, maintain, and improve our services</li>
+                        <li>Process transactions and send related information</li>
+                        <li>Send you technical notices and support messages</li>
+                        <li>Respond to your comments and questions</li>
+                        <li>Communicate with you about products, services, and events</li>
+                    </ul>
+                </div>
+                
+                <div class="mb-4">
+                    <h3>Information Sharing</h3>
+                    <p>We do not share, sell, or otherwise disclose your personal information for purposes other than those outlined in this Privacy Policy. However, we may disclose your personal information to a third party if required by law.</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h3>Data Security</h3>
+                    <p>We have implemented measures designed to secure your personal information from accidental loss and from unauthorized access, use, alteration, and disclosure.</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h3>Your Rights</h3>
+                    <p>You have the right to access, correct, or delete your personal information. You may also have the right to restrict or object to certain processing of your personal information.</p>
+                </div>
+                
+                <div class="text-center">
+                    <a href="{% url 'homepage:homepage' %}" class="btn btn-primary">Back to Homepage</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

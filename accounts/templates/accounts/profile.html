@@ -1,0 +1,265 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}{{ user.get_full_name }} - Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Profile Header -->
+        <div class="col-12 mb-4">
+            <div class="auth-container p-4">
+                <div class="row align-items-center">
+                    <div class="col-md-3 text-center">
+                        {% if user.profile_picture %}
+                            <img src="{{ user.profile_picture.url }}" alt="Profile Picture" 
+                                 class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                        {% else %}
+                            <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center mx-auto" 
+                                 style="width: 150px; height: 150px;">
+                                <i class="fas fa-user fa-4x text-white"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <h1 class="mb-2">{{ user.get_full_name }}</h1>
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-envelope me-2"></i>{{ user.email }}
+                        </p>
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-phone me-2"></i>{{ user.phone }}
+                        </p>
+                        {% if user.country %}
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-map-marker-alt me-2"></i>{{ user.country }}
+                        </p>
+                        {% endif %}
+                        {% if user.birthdate %}
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-birthday-cake me-2"></i>{{ user.birthdate|date:"F j, Y" }}
+                            {% if user.get_age %}
+                                ({{ user.get_age }} years old)
+                            {% endif %}
+                        </p>
+                        {% endif %}
+                        {% if user.facebook_profile %}
+                        <p class="text-muted mb-2">
+                            <i class="fab fa-facebook me-2"></i>
+                            <a href="{{ user.facebook_profile }}" target="_blank" class="text-decoration-none">Facebook Profile</a>
+                        </p>
+                        {% endif %}
+                        <p class="text-muted mb-0">
+                            <i class="fas fa-calendar me-2"></i>Member since {{ user.date_joined|date:"F Y" }}
+                        </p>
+                    </div>
+                    <div class="col-md-3 text-end">
+                        <a href="{% url 'accounts:edit_profile' %}" class="btn btn-primary mb-2 w-100">
+                            <i class="fas fa-edit me-2"></i>Edit Profile
+                        </a>
+                        <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                            <i class="fas fa-trash me-2"></i>Delete Account
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="col-12 mb-4">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-rocket fa-3x text-primary mb-3"></i>
+                            <h3 class="card-title">{{ total_projects_created }}</h3>
+                            <p class="card-text text-muted">Projects Created</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-hand-holding-heart fa-3x text-success mb-3"></i>
+                            <h3 class="card-title">{{ total_donations_made }}</h3>
+                            <p class="card-text text-muted">Donations Made</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-coins fa-3x text-warning mb-3"></i>
+                            <h3 class="card-title">{{ total_donated|floatformat:0 }} EGP</h3>
+                            <p class="card-text text-muted">Total Donated</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects Section -->
+        {% if projects %}
+        <div class="col-12 mb-4">
+            <div class="auth-container p-4">
+                <h2 class="mb-4">
+                    <i class="fas fa-rocket me-2"></i>My Projects
+                </h2>
+                <div class="row">
+                    {% for project in projects %}
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-img-top" style="height: 200px; background-image: url('{% if project.images.first %}{{ project.images.first.image.url }}{% else %}https://via.placeholder.com/400x200/667eea/ffffff?text=No+Image{% endif %}'); background-size: cover; background-position: center;"></div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ project.title }}</h5>
+                                <p class="card-text text-muted">{{ project.category.name }}</p>
+                                
+                                <div class="progress mb-2" style="height: 8px;">
+                                    <div class="progress-bar" role="progressbar" style="width: {{ project.progress_percentage }}%"></div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <small class="text-muted">{{ project.progress_percentage|floatformat:1 }}% funded</small>
+                                    <small class="text-muted">{{ project.current_amount|floatformat:0 }} / {{ project.total_target|floatformat:0 }} EGP</small>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-{% if project.status == 'active' %}success{% elif project.status == 'funded' %}primary{% elif project.status == 'draft' %}secondary{% else %}warning{% endif %}">
+                                        {{ project.get_status_display }}
+                                    </span>
+                                    <a href="{% url 'projects:project_detail' project.slug %}" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>View
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Donations Section -->
+        {% if donations %}
+        <div class="col-12 mb-4">
+            <div class="auth-container p-4">
+                <h2 class="mb-4">
+                    <i class="fas fa-hand-holding-heart me-2"></i>My Donations
+                </h2>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Project</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Message</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for donation in donations %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="{% if donation.project.images.first %}{{ donation.project.images.first.image.url }}{% else %}https://via.placeholder.com/50x50/667eea/ffffff?text=P{% endif %}" 
+                                             alt="Project" class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                        <div>
+                                            <strong>{{ donation.project.title }}</strong>
+                                            <br><small class="text-muted">{{ donation.project.category.name }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="fw-bold text-success">{{ donation.amount|floatformat:0 }} EGP</span>
+                                </td>
+                                <td>{{ donation.created_at|date:"M j, Y" }}</td>
+                                <td>
+                                    {% if donation.message %}
+                                        <span class="text-muted">{{ donation.message|truncatechars:50 }}</span>
+                                    {% else %}
+                                        <span class="text-muted">No message</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'projects:project_detail' donation.project.slug %}" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>View Project
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Empty State Messages -->
+        {% if not projects and not donations %}
+        <div class="col-12">
+            <div class="auth-container p-5 text-center">
+                <i class="fas fa-user-circle fa-5x text-muted mb-4"></i>
+                <h3 class="text-muted">Welcome to your profile!</h3>
+                <p class="text-muted mb-4">
+                    You haven't created any projects or made any donations yet. 
+                    Start your crowdfunding journey today!
+                </p>
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="{% url 'projects:project_create' %}" class="btn btn-primary">
+                        <i class="fas fa-rocket me-2"></i>Create Your First Project
+                    </a>
+                    <a href="{% url 'homepage:homepage' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-search me-2"></i>Explore Projects
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Delete Account Modal -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteAccountModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Delete Account
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="{% url 'accounts:delete_account' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Warning:</strong> This action cannot be undone!
+                    </div>
+                    <p>Are you sure you want to permanently delete your account? This will:</p>
+                    <ul>
+                        <li>Delete all your projects</li>
+                        <li>Remove all your donations</li>
+                        <li>Delete your profile and personal information</li>
+                        <li>Cancel any active subscriptions</li>
+                    </ul>
+                    <p class="text-danger fw-bold">This action is irreversible!</p>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Enter your password to confirm:</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                        <div class="form-text">You must enter your password to confirm account deletion.</div>
+                    </div>
+                    
+                    <input type="hidden" name="confirm_delete" value="true">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Delete My Account
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

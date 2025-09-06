@@ -1,0 +1,177 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}{{ tag.name }} - Projects{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="mb-0">
+                    <i class="fas fa-tag me-2" style="color: {{ tag.color }};"></i>
+                    {{ tag.name }}
+                </h1>
+                <a href="{% url 'projects:project_list' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to All Projects
+                </a>
+            </div>
+            
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5>Tag Statistics</h5>
+                    <ul class="list-unstyled">
+                        <li><strong>Total Projects:</strong> {{ page_obj.paginator.count }}</li>
+                        <li><strong>Active Projects:</strong> {{ page_obj|length }}</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h5>Quick Actions</h5>
+                    <a href="{% url 'projects:project_create' %}" class="btn btn-success">
+                        <i class="fas fa-plus me-2"></i>Create Project with {{ tag.name }} Tag
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if page_obj %}
+    <div class="row">
+        {% for project in page_obj %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 project-card">
+                <div class="card-img-top project-image" style="background-image: url('{% if project.images.first %}{{ project.images.first.image.url }}{% else %}https://via.placeholder.com/400x200/667eea/ffffff?text=No+Image{% endif %}');">
+                    <div class="project-overlay">
+                        <a href="{% url 'projects:project_detail' project.slug %}" class="btn btn-light">
+                            <i class="fas fa-eye me-2"></i>View Project
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ project.title }}</h5>
+                    <p class="card-text text-muted">by {{ project.creator.get_full_name }}</p>
+                    
+                    <div class="progress mb-3">
+                        <div class="progress-bar" role="progressbar" style="width: {{ project.progress_percentage }}%"></div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-primary fw-bold">{{ project.current_amount|floatformat:0 }} EGP</span>
+                        <span class="text-muted">{{ project.progress_percentage|floatformat:1 }}%</span>
+                    </div>
+                    
+                    <p class="card-text">{{ project.details|truncatewords:20 }}</p>
+                    
+                    <div class="mb-3">
+                        {% for project_tag in project.tags.all %}
+                        <span class="badge bg-secondary me-1">{{ project_tag.name }}</span>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>
+                            {{ project.end_date|timeuntil }} left
+                        </small>
+                        <span class="badge bg-{{ project.status_color }}">{{ project.get_status_display }}</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'projects:project_detail' project.slug %}" class="btn btn-primary w-100">
+                        <i class="fas fa-eye me-2"></i>View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Project pagination">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">&laquo; First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+            {% endif %}
+            
+            <li class="page-item active">
+                <span class="page-link">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+            
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+        <h3>No Projects Found</h3>
+        <p class="text-muted">No projects found with the "{{ tag.name }}" tag.</p>
+        <a href="{% url 'projects:project_list' %}" class="btn btn-primary">
+            <i class="fas fa-list me-2"></i>Browse All Projects
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.project-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+.project-image {
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.project-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.project-card:hover .project-overlay {
+    opacity: 1;
+}
+
+.progress {
+    height: 8px;
+    border-radius: 4px;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, #28a745, #20c997);
+}
+</style>
+{% endblock %}

@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Projects - Crowdfunding Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: #f8f9fa;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+        
+        .search-container {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-top: -50px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .filter-sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .filter-section {
+            margin-bottom: 2rem;
+        }
+        
+        .filter-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .project-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        
+        .project-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .project-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .project-card:hover .project-overlay {
+            opacity: 1;
+        }
+        
+        .project-overlay .btn {
+            background: white;
+            color: var(--primary-color);
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .project-overlay .btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .project-content {
+            padding: 1.5rem;
+        }
+        
+        .project-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+            line-height: 1.4;
+        }
+        
+        .project-creator {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: #e9ecef;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-color), #20c997);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .project-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .project-target {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .project-progress {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .project-tags {
+            margin-bottom: 1rem;
+        }
+        
+        .tag {
+            display: inline-block;
+            background: #f8f9fa;
+            color: #666;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .project-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stars {
+            color: var(--warning-color);
+        }
+        
+        .rating-count {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .sort-controls {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .results-count {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .category-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .category-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .category-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .category-count {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .pagination {
+            justify-content: center;
+            margin-top: 3rem;
+        }
+        
+        .page-link {
+            border: none;
+            color: var(--primary-color);
+            padding: 10px 15px;
+            margin: 0 2px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .page-link:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .page-item.active .page-link {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+        
+        .no-results i {
+            font-size: 4rem;
+            color: #ddd;
+            margin-bottom: 1rem;
+        }
+        
+        .featured-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--warning-color);
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: var(--accent-color);
+            color: white;
+        }
+        
+        .status-funded {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .days-remaining {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .search-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .filter-sidebar {
+                margin-bottom: 2rem;
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-3">Discover Amazing Projects</h1>
+            <p class="lead mb-0">
+                Support innovative ideas and creative projects from our community
+            </p>
+        </div>
+    </section>
+
+    <!-- Search and Filters -->
+    <div class="container">
+        <div class="search-container">
+            <form method="GET" action="{% url 'projects:project_list' %}">
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <label for="search-query" class="form-label">Search Projects</label>
+                        <input type="text" name="search_query" id="search-query" 
+                               class="form-control" value="{{ search_form.search_query.value|default:'' }}"
+                               placeholder="Search by title, tags, or creator...">
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="search-type" class="form-label">Search Type</label>
+                        <select name="search_type" id="search-type" class="form-select">
+                            {% for value, label in search_form.search_type.field.choices %}
+                            <option value="{{ value }}" {% if search_form.search_type.value == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select name="category" id="category" class="form-select">
+                            {% for choice in search_form.category.field.choices %}
+                            <option value="{{ choice.0 }}" {% if search_form.category.value == choice.0 %}selected{% endif %}>
+                                {{ choice.1 }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-lg-2">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search me-2"></i>Search
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row">
+            <!-- Filter Sidebar -->
+            <div class="col-lg-3">
+                <div class="filter-sidebar">
+                    <h4 class="mb-4">Advanced Filters</h4>
+                    
+                    <form method="GET" action="{% url 'projects:project_list' %}">
+                        <!-- Preserve search query -->
+                        {% if search_form.search_query.value %}
+                        <input type="hidden" name="search_query" value="{{ search_form.search_query.value }}">
+                        {% endif %}
+                        {% if search_form.search_type.value %}
+                        <input type="hidden" name="search_type" value="{{ search_form.search_type.value }}">
+                        {% endif %}
+                        {% if search_form.category.value %}
+                        <input type="hidden" name="category" value="{{ search_form.category.value }}">
+                        {% endif %}
+                        
+                        <div class="filter-section">
+                            <div class="filter-title">Target Amount (EGP)</div>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <input type="number" name="min_target" class="form-control" 
+                                           value="{{ search_form.min_target.value|default:'' }}"
+                                           placeholder="Min">
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" name="max_target" class="form-control" 
+                                           value="{{ search_form.max_target.value|default:'' }}"
+                                           placeholder="Max">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-section">
+                            <div class="filter-title">Project Status</div>
+                            <select name="status" class="form-select">
+                                {% for choice in search_form.status.field.choices %}
+                                <option value="{{ choice.0 }}" {% if search_form.status.value == choice.0 %}selected{% endif %}>
+                                    {{ choice.1 }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 mb-3">
+                            <i class="fas fa-filter me-2"></i>Apply Filters
+                        </button>
+                        
+                        <a href="{% url 'projects:project_list' %}" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-times me-2"></i>Clear Filters
+                        </a>
+                    </form>
+                    
+                    <!-- Categories List -->
+                    <hr class="my-4">
+                    <h6 class="filter-title">Browse Categories</h6>
+                    <div class="row g-2">
+                        {% for category in categories %}
+                        <div class="col-6">
+                            <a href="{% url 'projects:category_detail' category.pk %}" class="text-decoration-none">
+                                <div class="category-card">
+                                    <div class="category-icon">
+                                        <i class="fas fa-{{ category.icon|default:'folder' }}"></i>
+                                    </div>
+                                    <h6 class="category-name">{{ category.name }}</h6>
+                                    <small class="category-count">{{ category.project_count }} projects</small>
+                                </div>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Projects Column -->
+            <div class="col-lg-9">
+                <!-- Sort Controls -->
+                <div class="sort-controls">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <span class="results-count">
+                                {% if page_obj %}
+                                    {% if page_obj.paginator.count == 1 %}
+                                        1 project found
+                                    {% else %}
+                                        {{ page_obj.paginator.count }} projects found
+                                    {% endif %}
+                                {% else %}
+                                    No projects found
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <label class="me-2">Sort by:</label>
+                            <select class="form-select d-inline-block w-auto" onchange="changeSort(this.value)">
+                                <option value="-created_at" {% if sort_by == '-created_at' %}selected{% endif %}>Newest First</option>
+                                <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>Highest Rated</option>
+                                <option value="target" {% if sort_by == 'target' %}selected{% endif %}>Highest Target</option>
+                                <option value="deadline" {% if sort_by == 'deadline' %}selected{% endif %}>Ending Soon</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Projects Grid -->
+                {% if page_obj %}
+                    <div class="row">
+                        {% for project in page_obj %}
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="project-card">
+                                <div class="project-image" style="background-image: url('{% if project.images.first %}{{ project.images.first.image.url }}{% else %}https://via.placeholder.com/400x200/667eea/ffffff?text=No+Image{% endif %}');">
+                                    <div class="project-overlay">
+                                        <a href="{% url 'projects:project_detail' project.slug %}" class="btn">
+                                            <i class="fas fa-eye me-2"></i>View Project
+                                        </a>
+                                    </div>
+                                    
+                                    {% if project.is_featured %}
+                                    <div class="featured-badge">
+                                        <i class="fas fa-star me-1"></i>Featured
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <div class="status-badge status-{{ project.status }}">
+                                        {{ project.get_status_display }}
+                                    </div>
+                                    
+                                    {% if project.status == 'active' %}
+                                    <div class="days-remaining">
+                                        {{ project.days_remaining }} days left
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="project-content">
+                                    <h5 class="project-title">{{ project.title }}</h5>
+                                    <p class="project-creator">by {{ project.creator.get_full_name }}</p>
+                                    
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: {{ project.progress_percentage }}%"></div>
+                                    </div>
+                                    
+                                    <div class="project-stats">
+                                        <span class="project-target">{{ project.current_amount|floatformat:0 }} EGP</span>
+                                        <span class="project-progress">{{ project.progress_percentage|floatformat:1 }}%</span>
+                                    </div>
+                                    
+                                    <div class="project-tags">
+                                        {% for tag in project.tags.all|slice:":3" %}
+                                        <span class="tag">{{ tag.name }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    
+                                    <div class="project-rating">
+                                        <div class="stars">
+                                            {% for i in "12345" %}
+                                                {% if forloop.counter <= project.average_rating %}
+                                                    <i class="fas fa-star"></i>
+                                                {% else %}
+                                                    <i class="far fa-star"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                        <span class="rating-count">({{ project.total_ratings }})</span>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-clock me-1"></i>
+                                            {{ project.created_at|timesince }} ago
+                                        </small>
+                                        <small class="text-muted">
+                                            <i class="fas fa-folder me-1"></i>
+                                            {{ project.category.name }}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Pagination -->
+                    {% if page_obj.has_other_pages %}
+                    <nav aria-label="Project pagination">
+                        <ul class="pagination">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.next_page_number }}">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                    
+                {% else %}
+                    <div class="no-results">
+                        <i class="fas fa-search"></i>
+                        <h4>No projects found</h4>
+                        <p class="mb-4">
+                            Try adjusting your search criteria or browse our categories to discover amazing projects.
+                        </p>
+                        <div class="d-flex gap-3 justify-content-center">
+                            <a href="{% url 'homepage:homepage' %}" class="btn btn-primary">
+                                <i class="fas fa-home me-2"></i>Back to Home
+                            </a>
+                            <a href="{% url 'homepage:category_explore' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-compass me-2"></i>Explore Categories
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Project CTA -->
+    <section class="py-5 bg-light">
+        <div class="container text-center">
+            <h2 class="mb-3">Ready to Start Your Project?</h2>
+            <p class="lead mb-4">
+                Join thousands of creators who have successfully funded their projects on our platform.
+            </p>
+            <a href="{% url 'projects:project_create' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-rocket me-2"></i>Create Your Project
+            </a>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function changeSort(sortValue) {
+            const url = new URL(window.location);
+            url.searchParams.set('sort', sortValue);
+            window.location.href = url.toString();
+        }
+        
+        // Auto-submit form when filters change
+        document.querySelectorAll('.filter-sidebar select, .filter-sidebar input').forEach(element => {
+            element.addEventListener('change', function() {
+                this.closest('form').submit();
+            });
+        });
+    </script>
+</body>
+</html>
